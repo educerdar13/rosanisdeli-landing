@@ -236,13 +236,85 @@ Git isn't installed. Download it from [git-scm.com](https://git-scm.com).
 
 ## How It Works
 
-The `CLAUDE.md` file contains instructions that turn Claude Code into a guided web-building assistant. When Claude opens this project, it reads those instructions and walks you through:
+The `CLAUDE.md` file contains instructions that turn Claude Code into a guided web-building assistant. When Claude opens this project, it reads those instructions and walks you through 6 phases — from questions to a live URL.
 
-1. **Discovery** — Questions about your business, audience, and design preferences
-2. **Design** — Color palette, typography, and layout recommendations
-3. **Build** — Scaffolds and codes your landing page with Next.js, Tailwind, and shadcn/ui
-4. **Preview** — Launches localhost and takes screenshots for review
-5. **Deploy** — Pushes to Vercel for a live URL you can share
+### Flow Map
+
+```mermaid
+flowchart TD
+    Start([You run 'claude']) --> P1
+
+    subgraph P1["Phase 1: Discovery"]
+        Q1[Round 1: Business basics] --> Q2[Round 2: Visual direction]
+        Q2 --> Check1{Design direction OK?}
+        Check1 -- No --> Q2
+        Check1 -- Yes --> Q3[Round 3: Content]
+        Q3 --> Q4[Round 4: Technical details]
+    end
+
+    P1 --> P2
+
+    subgraph P2["Phase 2: Design System"]
+        Colors[Pick colors + fonts] --> Archetype[Choose page archetype]
+        Archetype --> Present[Present design system]
+        Present --> Check2{Approved?}
+        Check2 -- No, change it --> Colors
+    end
+
+    Check2 -- Yes --> P3
+
+    subgraph P3["Phase 3: Scaffold"]
+        Node[Check Node.js] --> Create[Create Next.js project]
+        Create --> Shadcn[Install shadcn/ui components]
+        Shadcn --> Deps[Install dependencies]
+    end
+
+    P3 --> P4
+
+    subgraph P4["Phase 4: Build"]
+        Layout[Write layout.tsx] --> Page[Write page.tsx]
+        Page --> Components[Build all sections]
+        Components --> Humanize[Run copy through humanizer]
+    end
+
+    P4 --> P5
+
+    subgraph P5["Phase 5: Preview & QA"]
+        Dev[Start dev server] --> Screenshots[Take screenshots]
+        Screenshots --> SEO[Run SEO audit]
+        SEO --> Checklist[Run quality checklist]
+        Checklist --> Check3{Happy with it?}
+        Check3 -- No, tweak it --> P4
+    end
+
+    Check3 -- Yes --> Check4{Ready to deploy?}
+    Check4 -- No --> Done1([Keep code locally])
+
+    Check4 -- Yes --> P6
+
+    subgraph P6["Phase 6: Deploy"]
+        Build[npm run build] --> Deploy[Deploy to Vercel]
+        Deploy --> URL[Get live URL]
+    end
+
+    P6 --> Check5{Want changes?}
+    Check5 -- Yes --> P4
+    Check5 -- No --> Done2([You're done! Share your URL])
+
+    style P1 fill:#f0f4ff,stroke:#4a6fa5
+    style P2 fill:#f0f4ff,stroke:#4a6fa5
+    style P3 fill:#f5f0ff,stroke:#6a5fa5
+    style P4 fill:#f5f0ff,stroke:#6a5fa5
+    style P5 fill:#fff0f0,stroke:#a55f5f
+    style P6 fill:#f0fff0,stroke:#5fa55f
+```
+
+**Key decision points (where Claude asks you):**
+- After Round 2 — "Does this design direction work?"
+- After Phase 5 — "How does this look?" (give feedback to iterate)
+- Before Phase 6 — "Ready to deploy?"
+
+**Everything else is automatic.** Phases 3-4 run without asking — Claude just builds and shows you the result.
 
 ## Tech Stack
 

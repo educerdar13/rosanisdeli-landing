@@ -234,13 +234,85 @@ Git no esta instalado. Descargalo de [git-scm.com](https://git-scm.com).
 
 ## Como Funciona
 
-El archivo `CLAUDE.md` tiene instrucciones que convierten a Claude Code en un asistente guiado para construir paginas web. Cuando Claude abre este proyecto, lee esas instrucciones y te lleva paso a paso por:
+El archivo `CLAUDE.md` tiene instrucciones que convierten a Claude Code en un asistente guiado para construir paginas web. Cuando Claude abre este proyecto, lee esas instrucciones y te lleva por 6 fases — desde preguntas hasta una URL en vivo.
 
-1. **Descubrimiento** — Preguntas sobre tu negocio, audiencia y preferencias de diseno
-2. **Diseno** — Paleta de colores, tipografia y recomendaciones de layout
-3. **Construccion** — Arma y programa tu pagina con Next.js, Tailwind y shadcn/ui
-4. **Preview** — Levanta localhost y toma capturas para que revises
-5. **Publicacion** — Sube a Vercel para darte una URL en vivo que puedes compartir
+### Mapa del Flujo
+
+```mermaid
+flowchart TD
+    Start([Ejecutas 'claude']) --> P1
+
+    subgraph P1["Fase 1: Descubrimiento"]
+        Q1[Ronda 1: Datos del negocio] --> Q2[Ronda 2: Direccion visual]
+        Q2 --> Check1{Te gusta la direccion?}
+        Check1 -- No --> Q2
+        Check1 -- Si --> Q3[Ronda 3: Contenido]
+        Q3 --> Q4[Ronda 4: Detalles tecnicos]
+    end
+
+    P1 --> P2
+
+    subgraph P2["Fase 2: Sistema de Diseno"]
+        Colors[Elegir colores + fuentes] --> Archetype[Elegir arquetipo de pagina]
+        Archetype --> Present[Presentar sistema de diseno]
+        Present --> Check2{Aprobado?}
+        Check2 -- No, cambialo --> Colors
+    end
+
+    Check2 -- Si --> P3
+
+    subgraph P3["Fase 3: Scaffold"]
+        Node[Verificar Node.js] --> Create[Crear proyecto Next.js]
+        Create --> Shadcn[Instalar componentes shadcn/ui]
+        Shadcn --> Deps[Instalar dependencias]
+    end
+
+    P3 --> P4
+
+    subgraph P4["Fase 4: Construccion"]
+        Layout[Escribir layout.tsx] --> Page[Escribir page.tsx]
+        Page --> Components[Construir todas las secciones]
+        Components --> Humanize[Humanizar el copy]
+    end
+
+    P4 --> P5
+
+    subgraph P5["Fase 5: Preview y QA"]
+        Dev[Iniciar servidor de desarrollo] --> Screenshots[Tomar capturas]
+        Screenshots --> SEO[Auditoria SEO]
+        SEO --> Checklist[Checklist de calidad]
+        Checklist --> Check3{Te gusta?}
+        Check3 -- No, ajustalo --> P4
+    end
+
+    Check3 -- Si --> Check4{Listo para publicar?}
+    Check4 -- No --> Done1([Quedarte con el codigo local])
+
+    Check4 -- Si --> P6
+
+    subgraph P6["Fase 6: Publicacion"]
+        Build[npm run build] --> Deploy[Publicar en Vercel]
+        Deploy --> URL[Obtener URL en vivo]
+    end
+
+    P6 --> Check5{Quieres cambios?}
+    Check5 -- Si --> P4
+    Check5 -- No --> Done2([Listo! Comparte tu URL])
+
+    style P1 fill:#f0f4ff,stroke:#4a6fa5
+    style P2 fill:#f0f4ff,stroke:#4a6fa5
+    style P3 fill:#f5f0ff,stroke:#6a5fa5
+    style P4 fill:#f5f0ff,stroke:#6a5fa5
+    style P5 fill:#fff0f0,stroke:#a55f5f
+    style P6 fill:#f0fff0,stroke:#5fa55f
+```
+
+**Puntos de decision (donde Claude te pregunta):**
+- Despues de la Ronda 2 — "Te gusta esta direccion de diseno?"
+- Despues de la Fase 5 — "Como se ve?" (da feedback para iterar)
+- Antes de la Fase 6 — "Listo para publicar?"
+
+**Todo lo demas es automatico.** Las Fases 3-4 corren sin preguntar — Claude construye y te muestra el resultado.
 
 ## Stack Tecnologico
 
