@@ -39,7 +39,7 @@ After Round 1, summarize: "Got it — [business] helps [audience] with [service]
 
 After Round 2, **PAUSE and present the design direction**: "Here's what I'm thinking — [color palette with specific hex codes], [font pairing with names], [general layout approach]. Sound good?"
 
-**Wait for user approval before continuing to Round 3.** This ensures the content questions in Round 3 are informed by the approved design direction.
+**Wait for user approval before continuing to Round 3.** If the user wants changes, adjust and re-present until approved. This ensures the content questions in Round 3 are informed by the approved design direction.
 
 ---
 

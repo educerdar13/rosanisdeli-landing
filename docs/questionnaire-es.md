@@ -39,7 +39,7 @@ Despues de la Ronda 1, resume: "Perfecto — [negocio] ayuda a [audiencia] con [
 
 Despues de la Ronda 2, **PAUSA y presenta la direccion de diseno**: "Mira, esto es lo que estoy pensando — [paleta de colores con codigos hex], [combinacion de fuentes con nombres], [enfoque general del layout]. Te late?"
 
-**Espera la aprobacion del usuario antes de continuar a la Ronda 3.** Esto asegura que las preguntas de contenido esten informadas por el diseno aprobado.
+**Espera la aprobacion del usuario antes de continuar a la Ronda 3.** Si el usuario quiere cambios, ajusta y vuelve a presentar hasta que apruebe. Esto asegura que las preguntas de contenido esten informadas por el diseno aprobado.
 
 ---
 

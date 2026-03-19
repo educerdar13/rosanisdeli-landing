@@ -60,6 +60,7 @@ Minimize user decisions. The user should only answer questionnaire questions and
 
 **Never ask "should I...?" during Phases 3-4.** Just do it and show the result. The only decision points are:
 - After Round 2: "Does this design direction work?" (design approval)
+- After Round 4: "Does this capture everything?" (brief confirmation)
 - After Phase 5: "How does this look?" (feedback)
 - Before Phase 6: "Ready to deploy?" (deploy decision)
 
@@ -70,9 +71,9 @@ Read `docs/questionnaire.md` (or `docs/questionnaire-es.md` for Spanish). Ask qu
 
 If the user provides reference URLs, use the `web-reader` skill to analyze them. If they mention an industry you're unfamiliar with, use `deep-research`.
 
-**Important:** After Round 2 (Visual Direction), PAUSE and present the design direction to the user. Get their approval BEFORE continuing to Round 3 (Content). This ensures content decisions are informed by the approved design.
+**Important:** After Round 2 (Visual Direction), PAUSE and present the design direction to the user. Get their approval BEFORE continuing to Round 3 (Content). If the user wants changes, adjust the direction and re-present until approved. This ensures content decisions are informed by the approved design.
 
-**NEXT:** Proceed immediately to Phase 2.
+**NEXT:** After completing all 4 questionnaire rounds and confirming the brief, proceed immediately to Phase 2.
 
 ### Phase 2: Design System
 **Note:** The design direction was already presented and approved during the Round 2 pause in Phase 1. Phase 2 refines that into a complete design system.
@@ -281,14 +282,18 @@ cd site && npx vercel --yes
 
 See `docs/deployment-guide.md` for troubleshooting.
 
-## After Deployment
+## After Phase 6
 
-Once the site is deployed and the user has the URL:
+**If the user declines deployment:**
+Tell them: "No problem! Your page is ready at `site/`. Run `cd site && npm run dev` to see it locally anytime. You can deploy later whenever you want."
+
+**If the site is deployed and the user has the URL:**
 1. Celebrate: "Your page is live! Share it with anyone."
 2. Offer iteration: "Want me to make any changes? I can update and redeploy."
 3. If user wants changes → go back to Phase 4 or 5, edit, and redeploy
 4. If user is done → "Great work! The code is in the `site/` folder. You own it. Edit it anytime."
-5. Stand by — don't start a new questionnaire unless the user explicitly asks to build something new
+
+**In both cases:** Stand by — don't start a new questionnaire unless the user explicitly asks to build something new.
 
 ## Design Principles
 
