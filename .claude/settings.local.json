@@ -36,7 +36,8 @@
       "Bash(chmod*)",
       "Bash(wc*)",
       "WebSearch",
-      "WebFetch"
+      "WebFetch",
+      "Bash(gh auth:*)"
     ]
   }
 }
