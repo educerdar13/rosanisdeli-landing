@@ -1,9 +1,9 @@
-# Built landing page
-site/
+# Build output
 build/
 
 # Dependencies
 node_modules/
+site/node_modules/
 
 # Environment
 .env
@@ -23,9 +23,10 @@ Thumbs.db
 
 # Vercel
 .vercel/
+site/.vercel/
 
-# Next.js (inside site/)
-.next/
+# Next.js build output (inside site/)
+site/.next/
 out/
 
 # Debug
