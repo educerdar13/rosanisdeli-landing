@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { CheckCircle, XCircle, Clock, ChevronDown, LogOut, Phone, Mail, Calendar, Users, MessageCircle } from 'lucide-react'
+import { CheckCircle, XCircle, ChevronDown, LogOut, Phone, Mail, Calendar, Users, MessageCircle, Ban, Plus, Trash2 } from 'lucide-react'
 
 interface Reservation {
   id: string
@@ -30,6 +30,12 @@ const PAYMENT_LABELS = {
   refunded: { label: 'Reembolsado', color: 'text-red-400' },
 }
 
+interface BlockedDate {
+  id: string
+  date: string
+  reason: string
+}
+
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false)
   const [password, setPassword] = useState('')
@@ -40,6 +46,11 @@ export default function AdminPage() {
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [waLink, setWaLink] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<'reservations' | 'blocked'>('reservations')
+  const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([])
+  const [newBlockDate, setNewBlockDate] = useState('')
+  const [newBlockReason, setNewBlockReason] = useState('')
+  const [blockLoading, setBlockLoading] = useState(false)
 
   const fetchReservations = useCallback(async () => {
     setLoading(true)
@@ -53,9 +64,39 @@ export default function AdminPage() {
     setLoading(false)
   }, [password])
 
+  const fetchBlockedDates = useCallback(async () => {
+    const res = await fetch('/api/blocked-dates', {
+      headers: { 'x-admin-token': password },
+    })
+    if (res.ok) setBlockedDates(await res.json())
+  }, [password])
+
   useEffect(() => {
-    if (authed) fetchReservations()
-  }, [authed, fetchReservations])
+    if (authed) { fetchReservations(); fetchBlockedDates() }
+  }, [authed, fetchReservations, fetchBlockedDates])
+
+  const handleAddBlock = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newBlockDate) return
+    setBlockLoading(true)
+    await fetch('/api/blocked-dates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-token': password },
+      body: JSON.stringify({ date: newBlockDate, reason: newBlockReason }),
+    })
+    setNewBlockDate('')
+    setNewBlockReason('')
+    await fetchBlockedDates()
+    setBlockLoading(false)
+  }
+
+  const handleRemoveBlock = async (id: string) => {
+    await fetch(`/api/blocked-dates/${id}`, {
+      method: 'DELETE',
+      headers: { 'x-admin-token': password },
+    })
+    await fetchBlockedDates()
+  }
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
@@ -171,6 +212,96 @@ export default function AdminPage() {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-8">
+        {/* Tabs */}
+        <div className="flex gap-2 mb-8 border-b border-[#2A2825]">
+          <button
+            onClick={() => setActiveTab('reservations')}
+            className={`px-5 py-3 text-sm transition-colors border-b-2 -mb-px ${activeTab === 'reservations' ? 'border-[#C9A96E] text-[#C9A96E]' : 'border-transparent text-[#6B6459] hover:text-[#E8E0D0]'}`}
+          >
+            Reservas
+          </button>
+          <button
+            onClick={() => setActiveTab('blocked')}
+            className={`flex items-center gap-2 px-5 py-3 text-sm transition-colors border-b-2 -mb-px ${activeTab === 'blocked' ? 'border-[#C9A96E] text-[#C9A96E]' : 'border-transparent text-[#6B6459] hover:text-[#E8E0D0]'}`}
+          >
+            <Ban className="w-3.5 h-3.5" />
+            Fechas bloqueadas {blockedDates.length > 0 && <span className="bg-[#8B3A2A] text-white text-xs px-1.5 py-0.5 rounded-full">{blockedDates.length}</span>}
+          </button>
+        </div>
+
+        {/* Blocked dates tab */}
+        {activeTab === 'blocked' && (
+          <div className="space-y-6">
+            {/* Add new block */}
+            <div className="bg-[#1A1815] border border-[#2A2825] rounded-lg p-6">
+              <h3 className="text-[#C9A96E] text-sm font-medium mb-4">Bloquear una fecha</h3>
+              <form onSubmit={handleAddBlock} className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="blockDate" className="text-[#6B6459] text-xs tracking-widest">FECHA</label>
+                  <input
+                    id="blockDate"
+                    type="date"
+                    required
+                    value={newBlockDate}
+                    onChange={e => setNewBlockDate(e.target.value)}
+                    className="bg-[#0F0E0B] border border-[#2A2825] text-[#E8E0D0] px-4 py-2.5 rounded text-sm focus:outline-none focus:border-[#C9A96E] transition-colors [color-scheme:dark]"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5 flex-1">
+                  <label htmlFor="blockReason" className="text-[#6B6459] text-xs tracking-widest">MOTIVO (opcional)</label>
+                  <input
+                    id="blockReason"
+                    type="text"
+                    placeholder="Ej. Vacaciones, evento privado..."
+                    value={newBlockReason}
+                    onChange={e => setNewBlockReason(e.target.value)}
+                    className="bg-[#0F0E0B] border border-[#2A2825] text-[#E8E0D0] px-4 py-2.5 rounded text-sm focus:outline-none focus:border-[#C9A96E] transition-colors placeholder:text-[#3A3835]"
+                  />
+                </div>
+                <div className="flex items-end">
+                  <button
+                    type="submit"
+                    disabled={blockLoading}
+                    className="flex items-center gap-2 bg-[#8B3A2A] hover:bg-[#A04535] text-white px-5 py-2.5 rounded text-sm font-medium transition-colors disabled:opacity-50 whitespace-nowrap"
+                  >
+                    <Plus className="w-4 h-4" />
+                    {blockLoading ? 'Guardando...' : 'Bloquear fecha'}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* List of blocked dates */}
+            {blockedDates.length === 0 ? (
+              <div className="text-center py-16 text-[#6B6459]">
+                <Ban className="w-10 h-10 mx-auto mb-3 opacity-30" />
+                <p>No tienes fechas bloqueadas.</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {blockedDates.map(b => (
+                  <div key={b.id} className="bg-[#1A1815] border border-[#2A2825] rounded-lg px-5 py-4 flex items-center justify-between">
+                    <div>
+                      <p className="text-[#E8E0D0] font-medium">
+                        {new Date(b.date + 'T12:00').toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                      </p>
+                      {b.reason && <p className="text-[#6B6459] text-sm mt-0.5">{b.reason}</p>}
+                    </div>
+                    <button
+                      onClick={() => handleRemoveBlock(b.id)}
+                      className="flex items-center gap-1.5 text-[#6B6459] hover:text-red-400 transition-colors text-sm"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Quitar
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'reservations' && <>
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
@@ -317,6 +448,7 @@ export default function AdminPage() {
             ))}
           </div>
         )}
+        </>}
       </main>
     </div>
   )

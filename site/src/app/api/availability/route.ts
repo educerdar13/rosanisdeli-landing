@@ -32,10 +32,21 @@ export async function GET(req: NextRequest) {
     counts[date] = (counts[date] || 0) + 1
   })
 
-  // Return full dates (no more slots)
-  const fullDates = Object.entries(counts)
+  // Full dates by slot count
+  const fullBySlots = Object.entries(counts)
     .filter(([, count]) => count >= MAX_SLOTS)
     .map(([date]) => date)
 
-  return NextResponse.json({ fullDates, counts })
+  // Also fetch manually blocked dates
+  const { data: blocked } = await supabase
+    .from('blocked_dates')
+    .select('date')
+    .gte('date', startDate)
+    .lte('date', endDate)
+
+  const blockedDates = blocked?.map(b => b.date) || []
+
+  const fullDates = [...new Set([...fullBySlots, ...blockedDates])]
+
+  return NextResponse.json({ fullDates, counts, blockedDates })
 }
