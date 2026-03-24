@@ -37,7 +37,11 @@
       "Bash(wc*)",
       "WebSearch",
       "WebFetch",
-      "Bash(gh auth:*)"
+      "Bash(gh auth:*)",
+      "Bash(brew install:*)",
+      "Bash(ssh -T git@github.com)",
+      "Read(//Users/edutiago/**)",
+      "Read(//Users/edutiago/.ssh/**)"
     ]
   }
 }
