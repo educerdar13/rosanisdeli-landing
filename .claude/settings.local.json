@@ -41,7 +41,8 @@
       "Bash(brew install:*)",
       "Bash(ssh -T git@github.com)",
       "Read(//Users/edutiago/**)",
-      "Read(//Users/edutiago/.ssh/**)"
+      "Read(//Users/edutiago/.ssh/**)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }

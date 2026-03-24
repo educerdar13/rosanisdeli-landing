@@ -2,16 +2,23 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder'
-)
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 const MAX_SLOTS_PER_DAY = 3
+
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
+
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY!)
+}
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = getSupabase()
+    const resend = getResend()
     const body = await req.json()
     const { name, email, phone, date, time, guests, event_type, notes } = body
 
@@ -100,6 +107,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  const supabase = getSupabase()
   // Simple admin auth check via header
   const auth = req.headers.get('x-admin-token')
   if (auth !== process.env.ADMIN_PASSWORD) {

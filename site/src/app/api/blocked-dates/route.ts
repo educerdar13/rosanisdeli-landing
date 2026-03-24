@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder'
-)
-
 export async function GET(req: NextRequest) {
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
   const auth = req.headers.get('x-admin-token')
   if (auth !== process.env.ADMIN_PASSWORD) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
@@ -22,6 +18,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
   const auth = req.headers.get('x-admin-token')
   if (auth !== process.env.ADMIN_PASSWORD) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
